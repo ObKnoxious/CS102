@@ -4,17 +4,10 @@
 // Professor: Dr. Dunn
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
 using namespace std;
-
-vector <string> addParse(string fA){
-	vector <string> tokens;
-	stringstream check1(fA);
-	string mid;
-	while(getline(check1, mid, ' ')){
-		tokens.push_back(mid);
-	}
-	return tokens;
-}
 
 int main(){
 	int addressNumber;
@@ -22,12 +15,14 @@ int main(){
 	string roadType;
 	int lMonth;
 	int tMonth;
-	int arrayAdd;
-	string fullAddress;
-	cin >> fullAddress;
-	arrayAdd = addParse(fullAddress);
-	for(int i = 0; < arrayAdd.size(); i++)
-		cout << arrayAdd[i] << '\n';
+	cout << "Please enter your street address.\n";
+	cin >> addressNumber >> addressName >> roadType;
+	string fullAddress = to_string(addressNumber) + " " +  addressName + " "  + roadType;
+	cout << "What was your rent last month?\n";
+	cin >> lMonth;
+	cout << "What was your rent this month?\n";
+	cin >> tMonth;
+	cout << fullAddress << " was worth $" << lMonth << " last month and is worth $" << tMonth << " this month.\n";
 	return 0;
 
 }
