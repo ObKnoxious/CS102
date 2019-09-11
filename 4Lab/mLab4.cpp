@@ -10,8 +10,8 @@
 using namespace std;
 
 int main(){
-	float bal =0;
-	float n=0;
+	double bal =0;
+	double n=0;
 	string i;
 	bool s=true;
 	cout << "Enter your initial account amount: \n";
