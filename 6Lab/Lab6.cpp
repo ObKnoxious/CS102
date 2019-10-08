@@ -31,7 +31,11 @@ int main(){
 	i.close();
 	return 0;
 }
-
+/*
+ * So I started writing a custom class for ticket because that is an objectively faster way to solve the problem
+ * Then I got told I can't use stuff I didn't learn outside of lecture
+ * Then I used that stuff anyway and now my grade sucks
+ * So I'm not using this anymore, but I left it in as a comment because "It might be useful later" according to Katherine 
 class Ticket{
 	public:
 	string citationNumber;
@@ -52,3 +56,5 @@ class Ticket{
 		road =r;
 	}
 }
+
+*/
