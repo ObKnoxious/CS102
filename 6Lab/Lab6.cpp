@@ -57,54 +57,67 @@ int main(){
 	// Fine Vector
 	vector<double> f;
 	double tf;
-	doublt tv;
-	for(i =0; i < fline.size(); i++){
+	double tv;
+	// Checks for multiplier and creates new variable for that
+	for(int i =0; i < fline.size(); i++){
 		tv = cs.at(i) - sl.at(i);
 		switch(rt.at(i)){
-			case i:
+			case 'i':
 				tf = tv * 5.2252;
 				f.push_back(tf);
 				break;
-			case h:
+			case 'h':
 				tf = tv * 9.4412;
 				f.push_back(tf);
 				break;
-			case r:
-				ft = tv * 17.1525;
+			case 'r':
+				tf = tv * 17.1525;
 				f.push_back(tf);
 				break;
 			default: 
-				ft = tv * 12.152;
+				tf = tv * 12.152;
 				f.push_back(tf);
 		}
+	}
+	// Correcting for double didgit year input to 21st century
+	for(int i =0; i < y.size(); i++){
+		if(y.at(i) < 100){
+			y.at(i) += 2000;
+		}
+	}
+	// New time value for date checking
+	vector<int> nt;
+	int tnt;
+	for(int i =0; i < y.size(); i++){
+		tnt = y.at(i) *10000 + m.at(i) * 100 + d.at(i);
+		nt.push_back(tnt);
 	}
 	ofstream ofile;
 	string fto;
 	cout << "Enter a report file: ";
 	cin >> fto;
+	cout << "Enter report start date (mm dd yyyy): ";
+	cin >> m1 >> d1 >> y1;
+	cout << "Enter report end date (mm dd yyyy): ";
+	cin >> m2 >> d2 >> y2;
+	int nt1 = y1 * 10000 + m1 * 100 + d1;
+	int nt2 = y2 * 10000 + m2 * 100 + d2;
+	// Actual outuput to file begins here
 	ofile.open(fto);
 	string marr[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+	cout << nt1 << "\t" << nt2 << "\n";
 	for(int i = 0; i < fline.size(); i++){
+		cout << nt.at(i) << "\n";
+		if(nt.at(i) < nt2 && nt.at(i) > nt1){
 			ofile << setfill('0') << setw(2)
 			       	<< d.at(i) << "-" << marr[m.at(i)-1] << 
 				"-" << y.at(i) << " " << 
 				setfill(' ') << setw(10) << left << tnum.at(i) << "$" <<
-				; 
-	}
+				setfill(' ') << setw(9) << setprecision(2) << fixed << right << f.at(i) << "\n"; 
 	
-	/*vector<string> oline; //All output lines regardless of date
-	stringstream oo;
-	int oday;
-	for(i = 0; i < fline.size(); i++){
-		oday = d.at(i);
+		}
 	}
-	
-	string rf;
-	cout << "\nEnter a report file: ;
-	cin >> rf;
-	cout << "Enter report start date (mm dd yyyy): ";
-	cin >> d1; cin >> m1; cin >> y1;
-	*/
+	ofile.close();	
 	return 0;
 }
 /*
