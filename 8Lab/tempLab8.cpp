@@ -63,17 +63,17 @@ int ScoreHand(string deck[], vector<string> hand){
 // Custom class for cards
 class Card{
 	public:
-		Card(int c, int s);
-		Card(int c, int s, int p);
+		Card(int c, char s);
+		Card(int c, char s, int p);
 		// Getters for each var, explained in private
 		int getScore();
 		int getValue();
 		char getSuit();
-		string toString();
+		string getPrint();
 		int getPlayer();
 		// Setters for each var explained in private
 		void setValue(int);
-		void setSuit(int);
+		void setSuit(char);
 		void setPlayer(int);
 	private:
 		// Value, # of card
@@ -90,62 +90,27 @@ class Card{
 };
 // Do I have to declare this outside of my class like this? I feel like this hurts organization
 void Card::setValue(int v){
-	this->value = v;
+	     this->value = v;
 }
-void Card::setSuit(int c){
-	// gets int from loop and assigns suit to a char based on modulo of 52
-	if(c == 0){
-		this->suit = 'H';
-	} else if(c == 1){
-		this->suit = 'D';
-	} else if(c == 2){
-		this->suit = 'C';
-	} else if(c == 3){
-		this->suit = 'S';
-	} else{
-		// Assigns invalid options to e to signify error 
-		this->suit= 'E';
-	}
+void Card::setSuit(char c){
+	     this->suit = c;
 }
 void Card::setPlayer(int p){
 	     this->player = p;
 }
-Card::Card(int v, int s){
+Card::Card(int v, char s){
 	setValue(v);
 	setSuit(s);
 }
-Card::Card(int v, int s, int p){
+Card::Card(int v, char s, int p){
 	setValue(v);
 	setSuit(s);
 	setPlayer(p);
 }
-string Card::toString(){
- 	int t = getValue();
-	stringstream f;
-	// Determining jack, queen, king, and ace
-	if(t == 11){
-		f = 'J' + this->getSuit();
-	} else if(t == 12){
-		f = 'Q' + this->getSuit();
-	} else if(t == 13){
-		f = 'K' + this->getSuit();
-	} else if(t == 1){
-		f = 'A' + this->getSuit();
-	} else {
-		f = t + this->getSuit();
-	}
-	cout << f << "\t";
-	return f;
-}
-int Card::getValue(){
-	return this->value;
-}
-char Card::getSuit(){
-	return this->suit;
-}
-int Card::getPlayer(){
-	return this->player;
-}
+string Card::getPrint(){
+ 	t = getValue();
+	
+	if(t == 11){	
 int main(){
 	//Creating Deck
 	//string deck[52] = {};
@@ -159,23 +124,19 @@ int main(){
 	//	deck[i]=o;
 	//	cout << deck[i] << "  ";
 	//}
-	//Card deck[52] = {};
-	vector<Card> deck;
+	Card deck[52] = {}
 	for(int i=0; i<52;i++){
-		deck.push_back(Card(i%13,i%4));
-		//string meaningless = deck[i].getPrint();
-//		cout << deck[i].getPrint() << "\t";		
-	}
+
 	int  p;
 	bool s = true;
-	//while(s){
-	//	cout << "How many players? \n";
-	//	cin >> p;
-	//	if(p <= 26){
-	//		s=false;
-	//	} else {
-	//		cout << "No more than 26 players";
-	//	}
+	while(s){
+		cout << "How many players? \n";
+		cin >> p;
+		if(p <= 26){
+			s=false;
+		} else {
+			cout << "No more than 26 players";
+		}
 	// 2D vector of players, 1st dimmension is number of players
 	// Second is 2 because that is tthe number of cards in each players hand
 	//vector<vector<string> > players(p);
@@ -196,6 +157,6 @@ int main(){
 //		string ox = "(" + oy.str() + ")";
 //		cout << left << setw(20) << of << setw(4) << right << ox << "\n";
 //		}
-	//}
+	}
 }
 
