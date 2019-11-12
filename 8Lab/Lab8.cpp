@@ -13,7 +13,14 @@
 #include <random>
 #include <sstream>
 using namespace std;
-// Started this by copying all of Lab 7 into this file 
+/*
+ * I gutted most of my Lab 7 code before this. My TA grader told me my code didn't solve the problem in the most efficient way
+ * I wanted to write a custom class for lab 7 (actually the last several labs) and finally got to do it here since we covered them in class
+ * (Get it class in class, sorry for bad pun)
+ */
+// Prototype for random
+int GetRandom(int mi, int ma);
+// Declaration for random
 int GetRandom(int mi, int ma){
 	//srand(time(0));
 	int d = ma - mi;
@@ -21,7 +28,7 @@ int GetRandom(int mi, int ma){
        	//cout << r << "\t";	
 	return r;
 }	
-string DealCard(string (&deck)[52]){
+/*string DealCard(string (&deck)[52]){
 	int n;
 	bool s=true;
 	while(s){
@@ -35,7 +42,7 @@ string DealCard(string (&deck)[52]){
 		}
 	}
 	return(deck[n]);
-}
+}*/
 int ScoreHand(string deck[], vector<string> hand){
 	//As far as I can tell the deck is useless for this
 	//Uses only the first char in each string for score since suit is meaningless
@@ -88,7 +95,9 @@ class Card{
 		int player;
 
 };
-// Do I have to declare this outside of my class like this? I feel like this hurts organization
+// Do I have to declare this outside of my class like this? I feel like this hurts organizationi but this is how this was done in the slides so I'm using that style
+// I don't think we explicity covered this-> in class but I was raised on Java and it's baked into me to write classes with this-> in mutator functions
+// It would be bad to have all data publicly accessible for this as it would be easy to change stuff accidentally, so in order to keep variables private I need this->
 void Card::setValue(int v){
 	this->value = v;
 }
@@ -113,6 +122,7 @@ void Card::setPlayer(int p){
 Card::Card(int v, int s){
 	setValue(v);
 	setSuit(s);
+	setPlayer(-1);
 }
 Card::Card(int v, int s, int p){
 	setValue(v);
@@ -124,18 +134,18 @@ string Card::toString(){
 	stringstream f;
 	// Determining jack, queen, king, and ace
 	if(t == 11){
-		f = 'J' + this->getSuit();
+		f << 'J' << this->getSuit();
 	} else if(t == 12){
-		f = 'Q' + this->getSuit();
+		f << 'Q' << this->getSuit();
 	} else if(t == 13){
-		f = 'K' + this->getSuit();
-	} else if(t == 1){
-		f = 'A' + this->getSuit();
+		f << 'K' << this->getSuit();
+	} else if(t == 14){
+		f << 'A' << this->getSuit();
 	} else {
-		f = t + this->getSuit();
+		f << t << this->getSuit();
 	}
-	cout << f << "\t";
-	return f;
+
+	return f.str();
 }
 int Card::getValue(){
 	return this->value;
@@ -146,6 +156,57 @@ char Card::getSuit(){
 int Card::getPlayer(){
 	return this->player;
 }
+// Prototype for deck creation function
+//makeDeck(Card *deck[52]);
+// actual declaration of function
+// YES I know there is a pointer here, I explain more on that later
+//void makeDeck(Card *deck[52]){
+//	for(int i=0; i<52;i++){
+//		deck[i] = new Card(i%13+2,i%4);
+//		//cout << deck[i]->toString() << "\t";		
+//	}
+//}
+//Protoytpe for deck funtion
+void makeDeck(vector<Card> &deck);
+//Declaration for deck funtion
+void makeDeck(vector<Card> &deck){
+//	for(int i=0; i<52;i++){
+//		deck[i] = Card(i%13+2,i%4);
+//		cout << deck[i].toString() << "\t";		
+//	}
+}
+// Prototype for deal card
+// This is void, since we are just assigning the object value player for who has the cardi
+// The above line is no longer true
+int deal(vector<Card> &deck, int p);
+// Declaration for deal card
+int deal(vector<Card> &deck, int p){
+	bool s = true;
+	int k;
+	while(s){
+		k = GetRandom(0,52);
+		if(deck[k].getPlayer() == -1){
+			deck[k].setPlayer(p);
+			s = false;
+		}
+	
+	}
+	//Also returning number drawn to avoid chaos
+	return k;
+
+}
+// Finds cards assigned to a certain player
+// It is at this point I recognize my player system is kinda dumb but I'm commited to it now
+/*vector<int> findCard(Card deck[52], int p){
+	vector<int> r;
+	for(int i =0; i< 52; i++){
+		if(deck[i].getPlayer() = p){
+			r.push_back(i);
+		}
+	}
+}
+*/
+
 int main(){
 	//Creating Deck
 	//string deck[52] = {};
@@ -159,43 +220,36 @@ int main(){
 	//	deck[i]=o;
 	//	cout << deck[i] << "  ";
 	//}
-	//Card deck[52] = {};
+	// So yes, I used a pointer in this lab when we haven't mentioned them at all
+	// I know this is *kinda* against the rules but I didn't want the pain of solving this entire thing with a maze of varriables
+	// So a class was needed, I wanted to use a vector here, but in the lab restrictions I was told to pass an array into a function
+	// I was choosing to break the rules on vectors or pointers, and I went with pointers
+	//Card *deck[52];
+	//makeDeck(deck);
 	vector<Card> deck;
-	for(int i=0; i<52;i++){
-		deck.push_back(Card(i%13,i%4));
-		//string meaningless = deck[i].getPrint();
-//		cout << deck[i].getPrint() << "\t";		
-	}
-	int  p;
-	bool s = true;
-	//while(s){
-	//	cout << "How many players? \n";
-	//	cin >> p;
-	//	if(p <= 26){
-	//		s=false;
-	//	} else {
-	//		cout << "No more than 26 players";
-	//	}
-	// 2D vector of players, 1st dimmension is number of players
-	// Second is 2 because that is tthe number of cards in each players hand
-	//vector<vector<string> > players(p);
-	//for(int i =0; i<p;i++){
-	//	players[i].resize(2);
-	//}
-	//for(int i=0; i<p;i++){
-	//	for(int j=0; j<2;j++){
-	//		players[i][j]=DealCard(deck);
-	//		}
-//		int o2=ScoreHand(deck,players[i]);
-//		//Final output
-//		cout << "Player " << i+1 << " has cards: ";
-//		string of = players[i][0].substr(0, players[i][0].size()-1) + " " + players[i][1].substr(0, players[i][0].size()-1);
-//		// I need o2 as a string for output and i know there is a better way to do this but i've spen too long on this and just doing what i know works
-//		stringstream oy;
-//		oy << o2;
-//		string ox = "(" + oy.str() + ")";
-//		cout << left << setw(20) << of << setw(4) << right << ox << "\n";
+	makeDeck(deck);
+	// 0 is dealer, 1 is player
+	vector<int> dealer = {deal(deck, 0),deal(deck, 0)};
+	vector<int> player = {deal(deck, 1),deal(deck, 1)};
+	int t = deal(deck, 0);
+	bool playing = true;
+	while(playing){
+		string o1;
+		string o2;
+//		for(int i =0; i< dealer.size(); i++){
+//			o1 += deck[i].toString() + " ";
 //		}
-	//}
+		cout << "Dealer has cards: " << o1 << "\n";
+//		for(int i =0; i< player.size(); i++){
+//			o2 += deck[i].toString() + " ";
+//		}
+		cout << "Player has cards: " << o2 << "\n";
+		cout << "Hit or stand ?";
+		string ui;
+		cin >> ui;
+		if(ui == "stand"){
+			playing = 0;
+		}
+	}
 }
 
