@@ -15,10 +15,11 @@
 using namespace std;
 // https://www.tutorialspoint.com/Why-should-we-avoid-using-global-variables-in-C-Cplusplus
 // This is unnecessary and goes against everything I've been taught 
-const int GLOBAL_I_M = 5.2252;
-const int GLOBAL_H_M = 9.4412;
-const int GLOBAL_R_M = 17.1525;
-const int GLOBAL_O_M = 12.152;
+const double GLOBAL_I_M = 5.2252;
+const double GLOBAL_H_M = 9.4412;
+const double GLOBAL_R_M = 17.1525;
+const double GLOBAL_O_M = 12.152;
+const string mon[] {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Now", "Dec"};
 struct Date{
 	int day;
 	int month;
@@ -33,15 +34,68 @@ struct Ticket{
 };
 class Database{
 	public:
-		void add_ticket(const Ticket t){
-			data.push_back(t);
-		};
+		void add_ticket(const Ticket t);
 		vector<Ticket> gen_report(Date s, Date e);
 	private:
 		vector<Ticket> data;
 };
 // I was instructed to use istream not ifsteam
 // I spent over an hour trying to get this with istream, it is impossible as far as I can tell
+bool Read(Database &d, ifstream &in);
+bool Write(const vector<Ticket> &tickets, ostream &out, string c);
+int Encode(const Date &d);
+int main(int argc, char *argv[]){
+	if(argc != 5 ){
+		cout << "Usage: ./lab9 <input file> <start: year-month-day> <end: year-month-day> <output or '-'>\n";
+		return 0;
+	} else {
+//		cout << "Valid arguments \n";
+		// for debug
+//		for(int i =0; i	< argc; i++){
+//cout << "  Argv at " << i << " " << argv[i];
+//		}
+//		cout << "\n";
+	}
+	ifstream infile;
+	infile.open(argv[1]);
+	// Don't worry, this is closed inside the Read function
+	if(!infile.is_open()){
+		cout << "The file '"<< argv[1] << "' cannot be read.";
+		return 0;
+	}
+	Database d;
+	cout << endl;
+	Read(d, infile);
+	ofstream outfile(argv[4]);
+	vector<int> stav;
+	istringstream sta(argv[2]);
+	string token;
+	while(getline(sta, token, '-')){
+//		cout << "tokens: " << token << "\n";
+
+		stav.push_back(stoi(token));
+	}
+	if(stav[0] < 100){// Double didgit year is less than 100
+		stav[0]+=2000;
+	}
+	istringstream end(argv[3]);
+	vector<int> endv;
+	string tokene;
+	while(getline(end, tokene, '-')){
+//		cout << "tokens: " << tokene << "\n";
+		endv.push_back(stoi(tokene));
+	}
+//	cout << "Endv 0: " << endv[0] << "\n";
+
+	if(endv[0] < 100){// Double didgit year is less than 100
+		endv[0]+=2000;
+	}
+//	cout << "Endv 0: " << endv[0] << "\n";
+	Date startr { stav[2], stav[1], stav[0] };
+	Date endr { endv[2], endv[1], endv[0] };
+	string c = argv[4];
+	Write(d.gen_report(startr, endr), outfile, c);
+}
 bool Read(Database &d, ifstream &in){
 	// Breaks file down word by word
 	// This is a 2d vector, 1st dimmension is each line, nested (2nd) is word from each file
@@ -86,38 +140,64 @@ bool Read(Database &d, ifstream &in){
 	in.close();	
 	return true;
 }	
-bool Write(const vector<Ticket> &tickets, ostream &out){
-	return false;
+bool Write(const vector<Ticket> &tickets, ostream &out, string c){
+
+	for(int i =0;i<tickets.size();i++){
+		float fine;
+		int diff = tickets[i].clocked - tickets[i].limit;
+		if(diff <0){diff=0;}
+		switch(tickets[i].road){
+			case 'i':
+				fine = diff * GLOBAL_I_M;
+				break;
+			case 'h':
+				fine = diff * GLOBAL_H_M;
+				break;
+			case 'r':
+				fine = diff * GLOBAL_R_M;
+				break;
+			default: 
+				fine = diff * GLOBAL_O_M;
+		}
+		if(c == "-"){
+			cout << setfill('0') << setw(2)
+			<< tickets[i].d.day << "-" << mon[tickets[i].d.month-1] << 
+			"-" << tickets[i].d.year << " " << 
+			setfill(' ') << setw(10) << left << tickets[i].cNum << "$" <<
+			setfill(' ') << setw(9) << setprecision(2) << fixed << right << fine << "\n"; 
+		} else {
+			out << setfill('0') << setw(2)
+			<< tickets[i].d.day << "-" << mon[tickets[i].d.month-1] << 
+			"-" << tickets[i].d.year << " " << 
+			setfill(' ') << setw(10) << left << tickets[i].cNum << "$" <<
+			setfill(' ') << setw(9) << setprecision(2) << fixed << right << fine << "\n"; 
+		}
+	}
+	return true;
 }
 int Encode(const Date &d){
-	string da = to_string(d.day);
-	string mo = to_string(d.month);
-	string yr = to_string(d.year);
-	string fs = da + mo + yr;
-	return stoi(fs);
+	int tnt = d.year *10000 + d.month *100 + d.day;
+	return tnt;
 }
-int main(int argc, char *argv[]){
-	if(argc != 5){
-		cout << "Invalid arguments \n";
-		return 0;
-	} else {
-		cout << "Valid arguments \n";
-		// for debug
-		for(int i =0; i	< argc; i++){
-			cout << "  Argv at " << i << " " << argv[i];
+void Database::add_ticket(const Ticket t){
+	data.push_back(t);
+}
+vector<Ticket> Database::gen_report(Date s, Date e){
+	int st = Encode(s);
+	int en = Encode(e);
+//	cout << "st " << st << " en: " << en <<"\n";
+	vector<Ticket> r;
+	for(int i =0; i < this->data.size();i++){
+//		cout << Encode(data[i].d) << "\t";
+		if(Encode(data[i].d) >= st && Encode(data[i].d) <= en){
+			r.push_back(data[i]);
 		}
-		cout << "\n";
 	}
-	ifstream infile;
-	infile.open(argv[1]);
-	if(!infile.is_open()){
-		cout << "File not found\n";
-		return 1;
+	for(int i=0; i < r.size();i++){
+		//cout << r[i].cNum << "\n";
 	}
-	Database d;
-	cout << endl;
-	Read(d, infile);
-}
+	return r;
+};
 	/*int m1, d1, y1, m2, y2, d2; // Months days and years for range
 	vector<string> tnum; //Vector of ticket numbers
 	vector<int> m; //Vector of months from input file
