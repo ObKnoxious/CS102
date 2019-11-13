@@ -40,8 +40,51 @@ class Database{
 	private:
 		vector<Ticket> data;
 };
-bool Read(Database &d, istream &in){
-	return false;
+// I was instructed to use istream not ifsteam
+// I spent over an hour trying to get this with istream, it is impossible as far as I can tell
+bool Read(Database &d, ifstream &in){
+	// Breaks file down word by word
+	// This is a 2d vector, 1st dimmension is each line, nested (2nd) is word from each file
+	vector<vector<string>> fd;
+	string fline;
+	while(getline(in, fline)){
+		vector<string> tfline;
+		istringstream ss(fline);
+		do {
+			string w;
+			ss >> w;
+			tfline.push_back(w);
+		} while(ss);
+		fd.push_back(tfline);
+	}
+	cout << fline;
+	// For Debug
+	//	for(int i =0; i < fd.size(); i++){
+	//	cout << "Line " << i+1 << "\n";
+	//	for(int j =0; j < fd[i].size(); j++){
+	//		cout << "  " << fd[i][j];
+	//	}
+	//	cout << "\n";
+	//}
+	
+	// Converting year to 4 didgits
+	// Year is always in 4th collum
+	for(int i =0; i < fd.size();i++){
+		int yn = stoi(fd[i][3]);
+		//cout << " " << yn;
+		if(yn < 100){// Double didgit year is less than 100
+			yn+=2000;
+		}
+		fd[i][3] = to_string(yn);
+		//cout << " new " << fd[i][3];
+	}
+	for(int i=0; i < fd.size();i++){
+		Date d1 = {stoi(fd[i][2]), stoi(fd[i][1]), stoi(fd[i][3]) };
+		Ticket t { fd[i][0], d1, stoi(fd[i][4]), stoi(fd[i][5]), fd[i][6][0] };
+		d.add_ticket(t);
+	}
+	in.close();	
+	return true;
 }	
 bool Write(const vector<Ticket> &tickets, ostream &out){
 	return false;
@@ -64,39 +107,16 @@ int main(int argc, char *argv[]){
 			cout << "  Argv at " << i << " " << argv[i];
 		}
 		cout << "\n";
-		ifstream infile;
-		infile.open(argv[1]);
-		if(!infile.is_open()){
-			cout << "File not found\n";
-			return 1;
-		}
-		// Breaks file down word by word
-		// This is a 2d vector, 1st dimmension is each line, nested (2nd) is word from each file
-		vector<vector<string>> fd;
-		string fline;
-		while(getline(infile, fline)){
-//			cout << fline << "\n";
-			vector<string> tfline;
-			istringstream ss(fline);
-			do {
-				string w;
-				ss >> w;
-				cout << w;
-				tfline.push_back(w);
-			} while(ss);
-			fd.push_back(tfline);
-		}
-		cout << fd.size() << "\n";
-		for(int i =0; i < fd.size(); i++){
-			cout << "Line " << i+1 << "\n";
-			for(int j =0; j < fd[i].size(); i++){
-				cout << fd[i].size() << "\n";
-				cout << "  " << fd[i][j];
-			}
-			cout << "\n";
-		}
-		return 0;
 	}
+	ifstream infile;
+	infile.open(argv[1]);
+	if(!infile.is_open()){
+		cout << "File not found\n";
+		return 1;
+	}
+	Database d;
+	cout << endl;
+	Read(d, infile);
 }
 	/*int m1, d1, y1, m2, y2, d2; // Months days and years for range
 	vector<string> tnum; //Vector of ticket numbers
