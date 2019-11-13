@@ -23,23 +23,82 @@ struct Date{
 	int day;
 	int month;
 	int year;
-} 
+}; 
 struct Ticket{
 	string cNum;
 	Date d;
 	int clocked;
 	int limit;
 	char road;
-}
+};
 class Database{
 	public:
-		void add_ticket(const Ticket t);
+		void add_ticket(const Ticket t){
+			data.push_back(t);
+		};
 		vector<Ticket> gen_report(Date s, Date e);
 	private:
 		vector<Ticket> data;
+};
+bool Read(Database &d, istream &in){
+	return false;
+}	
+bool Write(const vector<Ticket> &tickets, ostream &out){
+	return false;
 }
-int main(){
-	int m1, d1, y1, m2, y2, d2; // Months days and years for range
+int Encode(const Date &d){
+	string da = to_string(d.day);
+	string mo = to_string(d.month);
+	string yr = to_string(d.year);
+	string fs = da + mo + yr;
+	return stoi(fs);
+}
+int main(int argc, char *argv[]){
+	if(argc != 5){
+		cout << "Invalid arguments \n";
+		return 0;
+	} else {
+		cout << "Valid arguments \n";
+		// for debug
+		for(int i =0; i	< argc; i++){
+			cout << "  Argv at " << i << " " << argv[i];
+		}
+		cout << "\n";
+		ifstream infile;
+		infile.open(argv[1]);
+		if(!infile.is_open()){
+			cout << "File not found\n";
+			return 1;
+		}
+		// Breaks file down word by word
+		// This is a 2d vector, 1st dimmension is each line, nested (2nd) is word from each file
+		vector<vector<string>> fd;
+		string fline;
+		while(getline(infile, fline)){
+//			cout << fline << "\n";
+			vector<string> tfline;
+			istringstream ss(fline);
+			do {
+				string w;
+				ss >> w;
+				cout << w;
+				tfline.push_back(w);
+			} while(ss);
+			fd.push_back(tfline);
+		}
+		cout << fd.size() << "\n";
+		for(int i =0; i < fd.size(); i++){
+			cout << "Line " << i+1 << "\n";
+			for(int j =0; j < fd[i].size(); i++){
+				cout << fd[i].size() << "\n";
+				cout << "  " << fd[i][j];
+			}
+			cout << "\n";
+		}
+		return 0;
+	}
+}
+	/*int m1, d1, y1, m2, y2, d2; // Months days and years for range
 	vector<string> tnum; //Vector of ticket numbers
 	vector<int> m; //Vector of months from input file
 	vector<int> d; //Vector of days from input file
@@ -79,7 +138,9 @@ int main(){
 		rt.push_back(trt);
 	}
 	infile.close();
+	*/
 	// Fine Vector
+	/*
 	vector<double> f;
 	double tf;
 	double tv;
@@ -143,9 +204,8 @@ int main(){
 		}
 	}
 	ofile.close();	
-	return 0;
+	
 }
-/*
  * So I started writing a custom class for ticket because that is an objectively faster way to solve the problem
  * Then I got told I can't use stuff I didn't learn outside of lecture
  * Then I used that stuff anyway and now my grade sucks
