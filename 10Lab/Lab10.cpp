@@ -172,9 +172,27 @@ void Picture::flip_x(){
 		}
 	}
 }
+void Picture::flip_y(){
+	// Returning to 2d vector
+	vector<vector<Pixel>> fx;
+	fx.resize(this->height);
+	for(int i =0; i < this->height; i++){
+		for(int j =0; j < this->width; j++){
+			fx[i].push_back( this->image[i*this->width + j]);
+		}
+	}
+	reverse(fx.begin(), fx.end());
+	this->image.resize(0);
+	for(int i=0; i < fx.size(); i++){
+		for(int j=0; j<fx[i].size(); j++){
+			this->image.push_back(fx[j][i]);
+		}
+	}
+}
 
 void Picture::write_output(ostream& out){
 	// Returning to 2d vector
+	/*
 	vector<vector<Pixel>> fx;
 	fx.resize(this->height);
 	for(int i =0; i < this->height; i++){
@@ -195,6 +213,7 @@ void Picture::write_output(ostream& out){
 			fxx[i].push_back(fx[i][j].blue);
 		}
 	}
+	
 	string xf;
 	for(int i =0; i < this->height; i++){
 		for(int j =0; j < this->width; j++){
@@ -202,6 +221,33 @@ void Picture::write_output(ostream& out){
 		}
 		xf+="\n";
 	}
-		
-	out << "P3\n" << "#width height\n" << this->width << " " << this->height << "\n" << xf;
+	*/
+	string fi;
+	for(int i =0;i<this->image.size();i++){
+		fi+= to_string(image[i].red) + " " + to_string(image[i].blue) + " " +to_string(image[i].green) + " ";
+	}
+	out << "P3\n" << "#width height\n" << this->width << " " << this->height << "\n" << fi;
 }
+void Picture::remove_channel(const string& color){
+       if(color == "red"){
+		for(int i=0; i<this->image.size();i++){
+	 		this->image[i].red =0;
+		}
+       }else if(color == "blue"){
+		for(int i=0; i<this->image.size();i++){
+	 		this->image[i].blue =0;
+		}
+       }else if(color == "green"){
+		for(int i=0; i<this->image.size();i++){
+	 		this->image[i].green =0;
+		}
+       }else if(color == "gray"){
+	       for(int i=0; i<this->image.size();i++){
+			int m = min((this->image[i].red, this->image[i].blue), this->image[i].green);
+			this->image[i].red-=m;
+			this->image[i].blue-=m;
+			this->image[i].green-=m;
+	       }
+	}
+}       
+
