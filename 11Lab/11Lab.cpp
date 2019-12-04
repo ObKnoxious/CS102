@@ -29,11 +29,12 @@ int main(){
 		if(i == "car"){
 			// second sentinel value
 			bool s2 = true;
-			do {
+			while(s2){
 				cout << "Enter car's miles: \n";
-				cin.clear();
 				cin >> t1;
-			}while(cin.fail() && t1<=0);
+				// Loop does not break if input is invalid and runs until valid input is given
+				if(t1 > 0){s2=false;}
+			}
 			nc+=1;
 			cm+=t1;
 			s2=true;
@@ -76,5 +77,15 @@ int main(){
 		cout << "Average car MPG = " << ct << "\n";
 		cout << "Average truck MPG = " << tt << "\n";
 		return 0;
+	}else if(nc >0){
+		double ct = cm/cg;
+		cout << "Average car MPG = " << ct << "\n";
+		cout << "No Trucks in Fleet\n";
+	}else if(nt >0){
+		double tt = tm/tg;
+		cout << "Average truck MPG = " << tt << "\n";
+		cout << "No cars in Fleet\n";
+	}else{
+		cout << "No cars in Fleet\nNo Trucks in Fleet\n";
 	}
 }
